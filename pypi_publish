@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+
+
+# IMPORTS
+from typing import List
+import os, sys, shutil
+
+
+# DEFAULT AND OPTIONAL COMMAND LINE ARGUMENTS
+python_command = 'python3'
+pip_command =    'pip3'
+
+if len(sys.argv) > 1:
+    args = sys.argv[1:]
+
+    for arg in args:
+        if 'python' in arg:
+            python_command = arg
+        elif 'pip' in arg:
+            pip_command = arg
+
+
+# FUNCTIONS
+def sh(cmd):
+    import subprocess
+
+    return subprocess.getstatusoutput(cmd)
+
+def cleanup(root_folder_path):
+    for (_, dir_paths, _) in os.walk(root_folder_path):
+        for dir_path in dir_paths:
+            if dir_path == 'dist' or  dir_path == 'build' or dir_path.endswith('.egg-info'):
+                shutil.rmtree(os.path.join(root_folder_path, dir_path))
+        
+        return
+
+def is_installed(package_name: str) -> bool:
+    return 'not found' not in sh(pip_command + ' show ' + package_name)[1]
+
+def install(package_name: str) -> str:
+    return sh(pip_command + ' install ' + package_name)
+
+def get_dependencies() -> List[str]:
+    packages = []
+    requirements_path = os.path.join(os.getcwd(), 'requirements.txt')
+    print(sh(pipreqs + ' --force ' + current_folder_path)[1])
+
+    with open(requirements_path, 'r') as f:
+        for line in f.readlines():
+            packages.append(line.strip().split('==')[0])
+    
+    os.remove(requirements_path)
+
+    return packages
+
+
+# PATHS
+current_folder_path = os.getcwd()
+setup_file_path = os.path.join(current_folder_path, 'setup.py')
+
+
+# Ensure to be in correct folder
+input('Current path: ' + current_folder_path + '\nPlease ensure you\'re in the correct folder and have setup.py ')
+
+
+# check for setup.py
+if not os.path.exists(setup_file_path):
+    print('setup.py was not found')
+
+    exit(1)
+
+
+# cleanup
+cleanup(current_folder_path)
+
+
+# version bump
+with open(setup_file_path, 'r') as f:
+    setup_file_str = f.read()
+
+new_setup_file_str = ''
+
+for line in setup_file_str.split('\n'):
+    if len(new_setup_file_str) > 0:
+        new_setup_file_str += '\n'
+    
+    if 'version=' not in line:
+        new_setup_file_str += line
+
+        continue
+    
+    version_str = line.replace('"', '').replace('\'', '').split('version=')[1].split(',')[0]
+    new_version_str = version_str
+    dot_count = version_str.count('.')
+    
+    while dot_count < 2:
+        new_version_str += '.0'
+        dot_count += 1
+    
+    version_comps = new_version_str.split('.')
+    version_comps[-1] = str(int(version_comps[-1]) + 1)
+
+    new_setup_file_str += line.replace(version_str, '.'.join(version_comps))
+
+
+# OPTIONALLY INSTALLING PIPREQS
+pipreqs = 'pipreqs'
+
+if not is_installed(pipreqs):
+    print(install(pipreqs)[1])
+
+
+# get dependencies
+dependencies = get_dependencies()
+dependencies_in_quotation_marks = []
+
+for dependency in dependencies:
+    dependencies_in_quotation_marks.append('"' + dependency + '"')
+
+new_setup_file_str = new_setup_file_str.replace(new_setup_file_str.split('install_requires=')[1].split(',')[0], '[' + ', '.join(dependencies_in_quotation_marks) + ']')
+
+# save new setup file
+with open(setup_file_path, 'w') as f:
+    f.write(new_setup_file_str)
+
+
+# Ensure you have the latest versions of twine, setuptools, and wheel
+print(sh(
+    python_command + ' -m pip install --user --upgrade twine setuptools wheel'
+)[1])
+
+
+# build the package
+print(sh(
+    python_command + ' setup.py sdist bdist_wheel'
+)[1])
+
+
+# upload it to pypi
+print(sh(
+    python_command + ' -m twine upload --repository pypi dist/*'
+)[1])
+
+
+# cleanup
+cleanup(current_folder_path)
