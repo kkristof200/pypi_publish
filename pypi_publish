@@ -117,7 +117,10 @@ dependencies_in_quotation_marks = []
 for dependency in dependencies:
     dependencies_in_quotation_marks.append('"' + dependency + '"')
 
-new_setup_file_str = new_setup_file_str.replace(new_setup_file_str.split('install_requires=')[1].split(',')[0], '[' + ', '.join(dependencies_in_quotation_marks) + ']')
+new_setup_file_str = new_setup_file_str.replace(
+    'install_requires=[' + new_setup_file_str.split('install_requires=[')[1].split('],')[0] + '],',
+    'install_requires=[' + ', '.join(dependencies_in_quotation_marks) + '],'
+)
 
 # save new setup file
 with open(setup_file_path, 'w') as f:
