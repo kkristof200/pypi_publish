@@ -2,7 +2,7 @@
 
 ## Install
 ~~~~
-cd /usr/local/bin && wget https://raw.githubusercontent.com/kkristof200/pypi_publish/master/pypi_publish && chmod u+x btcprice
+cd /usr/local/bin && wget https://raw.githubusercontent.com/kkristof200/pypi_publish/master/pypi_publish && chmod u+x pypi_publish
 ~~~~
 
 ## IMPORTANT
