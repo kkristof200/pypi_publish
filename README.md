@@ -1,9 +1,9 @@
 # pypi_publish
 
-## Setup
-1. open .pypirc and add your username and password
-2. move .pypirc to $HOME (probably ~/)
-3. move pypi_publish to /usr/local/bin (or any  other forder added to your $PATH)
+## Install
+~~~~
+cd /usr/local/bin && wget https://raw.githubusercontent.com/kkristof200/pypi_publish/master/pypi_publish && chmod u+x btcprice
+~~~~
 
 ## IMPORTANT
 __YOU NEED TO BE IN THE FOLDER, WHERE THE PACKAGE IS LOCATED, TO RUN THIS.__
