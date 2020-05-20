@@ -1,7 +1,11 @@
 # pypi_publish
 
 ## Install
-c
+~~~~shell
+wget https://raw.githubusercontent.com/kkristof200/pypi_publish/master/pypi_publish -O /usr/local/bin/pypi_publish && chmod u+x /usr/local/bin/pypi_publish
+# or
+curl https://raw.githubusercontent.com/kkristof200/pypi_publish/master/pypi_publish > /usr/local/bin/pypi_publish && chmod u+x /usr/local/bin/pypi_publish
+~~~~
 
 ## IMPORTANT
 __YOU NEED TO BE IN THE FOLDER, WHERE THE PACKAGE IS LOCATED, TO RUN THIS.__
