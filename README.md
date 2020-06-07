@@ -1,6 +1,7 @@
 # pypi_publish
 
 ## Install
+1. Download
 ~~~~shell
 wget https://raw.githubusercontent.com/kkristof200/pypi_publish/master/pypi_publish -O /usr/local/bin/pypi_publish && chmod u+x /usr/local/bin/pypi_publish
 # or
