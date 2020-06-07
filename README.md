@@ -7,6 +7,18 @@ wget https://raw.githubusercontent.com/kkristof200/pypi_publish/master/pypi_publ
 curl https://raw.githubusercontent.com/kkristof200/pypi_publish/master/pypi_publish > /usr/local/bin/pypi_publish && chmod u+x /usr/local/bin/pypi_publish
 ~~~~
 
+2. Create a file with the name '.pypirc' in your $HOME directory and add your credentials
+~~~~
+[distutils]
+index-servers =
+    pypi
+
+[pypi]
+username: USERNAME-PROBABLY-__token__
+password: PASSWORD
+~~~~
+
+
 ## IMPORTANT
 __YOU NEED TO BE IN THE FOLDER, WHERE THE PACKAGE IS LOCATED, TO RUN THIS.__
 
