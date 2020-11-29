@@ -7,8 +7,10 @@ import os, sys, shutil
 
 
 # DEFAULT AND OPTIONAL COMMAND LINE ARGUMENTS
-python_command = 'python3'
-pip_command =    'pip3'
+python_command =        'python3'
+pip_command =           'pip3'
+
+use_pipreqs = True
 
 if len(sys.argv) > 1:
     args = sys.argv[1:]
@@ -16,9 +18,10 @@ if len(sys.argv) > 1:
     for arg in args:
         if 'python' in arg:
             python_command = arg
+        elif 'no-pipreqs' in arg:
+            use_pipreqs = False
         elif 'pip' in arg:
             pip_command = arg
-
 
 # FUNCTIONS
 def sh(cmd):
@@ -104,23 +107,23 @@ for line in setup_file_str.split('\n'):
 
 
 # OPTIONALLY INSTALLING PIPREQS
-pipreqs = 'pipreqs'
+if use_pipreqs:
+    pipreqs = 'pipreqs'
 
-if not is_installed(pipreqs):
-    print(install(pipreqs)[1])
+    if not is_installed(pipreqs):
+        print(install(pipreqs)[1])
 
+    # get dependencies
+    dependencies = get_dependencies()
+    dependencies_in_quotation_marks = []
 
-# get dependencies
-dependencies = get_dependencies()
-dependencies_in_quotation_marks = []
+    for dependency in dependencies:
+        dependencies_in_quotation_marks.append('"' + dependency + '"')
 
-for dependency in dependencies:
-    dependencies_in_quotation_marks.append('"' + dependency + '"')
-
-new_setup_file_str = new_setup_file_str.replace(
-    'install_requires=[' + new_setup_file_str.split('install_requires=[')[1].split('],')[0] + '],',
-    'install_requires=[' + ', '.join(dependencies_in_quotation_marks) + '],'
-)
+    new_setup_file_str = new_setup_file_str.replace(
+        'install_requires=[' + new_setup_file_str.split('install_requires=[')[1].split('],')[0] + '],',
+        'install_requires=[' + ', '.join(dependencies_in_quotation_marks) + '],'
+    )
 
 # save new setup file
 with open(setup_file_path, 'w') as f:
